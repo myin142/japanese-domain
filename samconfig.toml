@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "japanese-domain"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-zip3xhw9ku7z"
+s3_prefix = "japanese-domain"
+region = "eu-central-1"
+confirm_changeset = false
+capabilities = "CAPABILITY_IAM"
