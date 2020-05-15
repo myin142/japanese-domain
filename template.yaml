@@ -11,6 +11,24 @@ Globals:
     Timeout: 20
 
 Resources:
+  # Sync
+  JapaneseVocabularySync:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: JapaneseSync
+      Handler: io.github.myin142.nihon.JapaneseVocabularySync::handleRequest
+      Runtime: java11
+      Environment:
+        Variables:
+          JAVA_TOOL_OPTIONS: -Djdk.xml.entityExpansionLimit=0
+      Policies:
+        - Statement:
+            - Sid: DynamodbUpdate
+              Effect: Allow
+              Action:
+                - dynamodb:UpdateItem
+              Resource: "*"
+
   # User Pool
   JapaneseGlobalUserPool:
     Type: AWS::Cognito::UserPool
