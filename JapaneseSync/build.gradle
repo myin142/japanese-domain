@@ -1,4 +1,5 @@
 plugins {
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
     id 'java'
 }
 
@@ -7,8 +8,28 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.amazonaws:aws-lambda-java-core:1.2.0'
+    def lombok_version = '1.18.12'
+
+    implementation platform('software.amazon.awssdk:bom:2.13.18')
+    implementation 'software.amazon.awssdk:dynamodb'
+
+    compileOnly "org.projectlombok:lombok:$lombok_version"
+    annotationProcessor "org.projectlombok:lombok:$lombok_version"
     implementation 'com.google.guava:guava:29.0-jre'
+//    implementation 'org.apache.logging.log4j:log4j-core:2.13.3'
+
+//    implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.30'
+//    compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: '1.7.30'
+
+    implementation group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.30'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.13.3'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
     testImplementation 'junit:junit:4.12'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'io.github.myin142.nihon.JapaneseSync'
+    }
 }
