@@ -11,23 +11,23 @@ Globals:
     Timeout: 20
 
 Resources:
-  JapaneseVocabularyTable:
+  RadicalSearchTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: japanese-vocabulary
+      TableName: kanji-radicals
+      AttributeDefinitions:
+        - AttributeName: radical
+          AttributeType: S
+        - AttributeName: kanji
+          AttributeType: S
+      KeySchema:
+        - AttributeName: radical
+          KeyType: HASH
+        - AttributeName: kanji
+          KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
-      AttributeDefinitions:
-        - AttributeName: vocabulary
-          AttributeType: S
-        - AttributeName: reading
-          AttributeType: S
-      KeySchema:
-        - AttributeName: vocabulary
-          KeyType: HASH
-        - AttributeName: reading
-          KeyType: RANGE
 
   # User Pool
   JapaneseGlobalUserPool:
