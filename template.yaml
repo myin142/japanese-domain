@@ -87,8 +87,8 @@ Resources:
             Statement:
               - Effect: "Allow"
                 Action:
-                  - "lambda:InvokeFunction"
-                Resource: "*"
+                  - "dynamodb:Query"
+                Resource: !GetAtt RadicalSearchTable.Arn
   JapaneseGlobalUnauthenticatedUserRole:
     Type: "AWS::IAM::Role"
     Properties:
