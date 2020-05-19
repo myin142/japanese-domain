@@ -26,14 +26,14 @@
         // Otherwise, leave segmentCount as 0.
         var segmentCount = 0;
 
-        var loc = window.location;
-        const paths = loc.pathname.slice(1).split('/');
-        paths[segmentCount] = `#/${paths[segmentCount]}`;
-
-        const port = loc.port ? `:${loc.port}` : '';
-        const hash = loc.hash.slice(2);
-        const url = `${loc.protocol}//${loc.hostname}${port}/${paths.join('/')}${loc.hash}`;
-        loc.replace(url);
+        var l = window.location;
+        l.replace(
+            l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+            l.pathname.split('/').slice(0, 1 + segmentCount).join('/') + '/?p=/' +
+            l.pathname.slice(1).split('/').slice(segmentCount).join('/').replace(/&/g, '~and~') +
+            (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+            l.hash
+        );
 
     </script>
 </head>
