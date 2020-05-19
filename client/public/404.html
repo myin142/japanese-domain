@@ -11,7 +11,11 @@
         // - https://stackoverflow.com/a/50247140
         // ========================================
         sessionStorage.redirect = location.pathname;
-        location.replace('/');
+
+        console.log(location.pathname);
+        console.log(location.pathname.split('/').slice(0).join('/'));
+
+        location.replace('/index.html')
     </script>
 </head>
 
