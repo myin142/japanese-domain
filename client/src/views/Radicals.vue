@@ -56,6 +56,7 @@
                 :key="item.radical"
                 :class="classesForRadical(item.radical)"
                 @click="selectRadical(item.radical)"
+                :title="item.tags.join(', ')"
                 >{{ resolveRadical(item.radical) }}</span
             >
         </div>
@@ -69,7 +70,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import * as _ from 'lodash';
-import * as AWS from 'aws-sdk';
 import { http } from '../services/http.service';
 import { kanjiRadicalService, KanjiRadical } from '../services/kanji-radical.service';
 
@@ -135,7 +135,6 @@ export default Vue.extend<RadicalsComponentData, any, any, any>({
         },
         async loadRadicalKanjis(radical: string): Promise<void> {
             const kanjiRadical: KanjiRadical = await this.searchRadical(radical);
-            console.log(kanjiRadical);
 
             this.radicalMap = {
                 ...this.radicalMap,
