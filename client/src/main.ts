@@ -18,6 +18,8 @@ new Vue({
         if (sessionStorage.redirect) {
             const redirect = sessionStorage.redirect
             delete sessionStorage.redirect
+            console.log(`Restoring redirect from ${redirect}`);
+
             this.$router.push(redirect)
         }
     }

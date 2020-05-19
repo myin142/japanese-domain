@@ -12,14 +12,19 @@ const authGuard = (to: any, from: any, next: any) => {
     if (auth.isAuthenticated()) {
         next();
     } else {
+        console.log('Unauthenticated. Redirect Login');
         next({ name: 'Login' });
     }
 };
 
 const handleAuth = async (to: any, from: any, next: any) => {
     const currUrl = window.location.href;
+    console.log(`Handle Authentication: ${currUrl}`);
     await auth.handleAuthCallback(currUrl);
+
     const redirect = auth.isAuthenticated() ? 'Radicals' : 'Error';
+    console.log(`Authentication Handled. Redirect to ${redirect}`);
+
     next({ name: redirect });
 }
 
@@ -46,11 +51,6 @@ const routes: Array<RouteConfig> = [
     },
     {
         path: '/login/oauth2',
-        beforeEnter: handleAuth,
-    },
-    // Auth for local development
-    {
-        path: '/id_token=*',
         beforeEnter: handleAuth,
     },
     {
