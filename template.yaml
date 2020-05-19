@@ -48,8 +48,8 @@ Resources:
         - email
         - openid
       CallbackURLs:
-        - http://localhost:8080/radical-search/login/oauth2
-        - https://myin142.github.io/radical-search/login/oauth2
+        - http://localhost:8080/login/oauth2
+        - https://myin142.github.io/login/oauth2
   JapaneseGlobalUserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
     Properties:

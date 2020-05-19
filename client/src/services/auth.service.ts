@@ -3,7 +3,7 @@ import * as AWS from 'aws-sdk';
 export class AuthService {
     private readonly domain = 'japanese-domain.auth.eu-central-1.amazoncognito.com';
     private readonly clientId = '2c67ijqv3lc5r7pq46oou0ckg5';
-    private readonly redirectUri = `${process.env.VUE_APP_OAUTH_REDIRECT}/${process.env.VUE_APP_BASE_URL}/login/oauth2`;
+    private readonly redirectUri = `${process.env.VUE_APP_OAUTH_REDIRECT}/login/oauth2`;
 
     login() {
         const url = `https://${this.domain}/login?client_id=${this.clientId}&redirect_uri=${this.redirectUri}&response_type=token&scope=email+openid`;
