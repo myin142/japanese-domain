@@ -25,7 +25,7 @@ const handleAuth = async (to: any, from: any, next: any) => {
     const redirect = auth.isAuthenticated() ? 'Radicals' : 'Error';
     console.log(`Authentication Handled. Redirect to ${redirect}`);
 
-    next({ name: redirect });
+    // next({ name: redirect });
 }
 
 const routes: Array<RouteConfig> = [
