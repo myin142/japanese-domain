@@ -29,7 +29,8 @@ export class AuthService {
     }
 
     isAuthenticated(): boolean {
-        return !this.getCredentials().expired;
+        const cred = this.getCredentials();
+        return cred != null && !cred.expired;
     }
 
     getCredentials(): AWS.CognitoIdentityCredentials {
