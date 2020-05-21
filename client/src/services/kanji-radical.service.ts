@@ -1,6 +1,5 @@
 import * as AWS from 'aws-sdk';
 import { AttributeValue, AttributeMap } from 'aws-sdk/clients/dynamodb';
-import { auth } from './auth.service';
 
 export class KanjiRadicalService {
 
@@ -16,16 +15,8 @@ export class KanjiRadicalService {
             ProjectionExpression: 'kanji, otherRadicals',
         }).promise();
 
-        const items = response.Items.map(i => this.resolveAttributeMap(i)) as KanjiRadicalResponse[];
-        const kanjis = [];
-        const otherRadicals: Set<string> = new Set();
-
-        items.forEach(item => {
-            kanjis.push(item.kanji);
-            item.otherRadicals.forEach(r => otherRadicals.add(r));
-        });
-
-        return { radical, kanjis, otherRadicals: Array.from(otherRadicals) };
+        const kanjis = response.Items.map(i => this.resolveAttributeMap(i)) as KanjiRadicalResponse[];
+        return { radical, kanjis };
     }
 
     private resolveAttributeMap<T>(attrMap: AttributeMap): T {
@@ -46,7 +37,7 @@ export class KanjiRadicalService {
     }
 }
 
-interface KanjiRadicalResponse {
+export interface KanjiRadicalResponse {
     radical: string;
     kanji: string;
     otherRadicals: string[];
@@ -54,8 +45,7 @@ interface KanjiRadicalResponse {
 
 export interface KanjiRadical {
     radical: string;
-    kanjis: string[];
-    otherRadicals: string[];
+    kanjis: KanjiRadicalResponse[];
 }
 
 export const kanjiRadicalService = new KanjiRadicalService();

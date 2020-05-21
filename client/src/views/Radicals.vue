@@ -122,6 +122,7 @@ export default Vue.extend<RadicalsComponentData, any, any, any>({
     data: () => ({
         radicals: [],
         radicalMap: {},
+        radicalPredictionMap: {},
         selectedRadicals: [],
         tagSearch: '',
     }),
@@ -140,6 +141,21 @@ export default Vue.extend<RadicalsComponentData, any, any, any>({
                 ...this.radicalMap,
                 [radical]: kanjiRadical.kanjis,
             };
+
+            const allRadicals = [radical, ...this.selectedRadicals];
+            let existingRadicalStr = Object.keys(this.radicalPredictionMap)
+                .filter(radicalStr => radicalStr.length === allRadicals.length)
+                .find(radicalStr => allRadicals.every(r => radicalStr.includes(r)));
+
+            if (existingRadicalStr == null) {
+                existingRadicalStr = allRadicals.join();
+            }
+
+            if (this.nextRadicals.length === 0) {
+                this.nextRadicals = kanjiRadical.otherRadicals;
+            } else {
+                this.nextRadicals = _.intersection(this.nextRadicals, kanjiRadical.otherRadicals);
+            }
         },
         async selectRadical(radical: string): Promise<void> {
             const selected = this.selectedRadicals as string[];
@@ -226,6 +242,7 @@ export default Vue.extend<RadicalsComponentData, any, any, any>({
 interface RadicalsComponentData {
     radicals: RadicalItem[];
     radicalMap: { [r: string]: string[] };
+    radicalPredictionMap: { [r: string]: string[] };
     selectedRadicals: string[];
     tagSearch: string;
 }
