@@ -32,24 +32,12 @@
     color: black;
     border-radius: 50%;
 }
-
-.radical-15 {
-    background-image: url(../assets/radical-15.png);
-}
-.radical-50 {
-    background-image: url(../assets/radical-50.png);
-}
-.radical-76 {
-    background-image: url(../assets/radical-76.png);
-}
-.radical-239 {
-    background-image: url(../assets/radical-239.png);
-}
 </style>
 
 <template>
     <div>
-        <input v-model="debounceTagSearch" />
+        <RadicalList />
+        <!--         <input v-model="debounceTagSearch" />
         <div class="radicals flex-items" :class="{ searching: isSearching }">
             <span
                 v-for="item in radicals"
@@ -63,7 +51,7 @@
         <hr />
         <div class="kanjis flex-items">
             <span v-for="kanji in selectedRadicalKanjis" :key="kanji">{{ kanji }}</span>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -72,35 +60,7 @@ import Vue from 'vue';
 import * as _ from 'lodash';
 import { http } from '../services/http.service';
 import { kanjiRadicalService, KanjiRadical } from '../services/kanji-radical.service';
-
-const radicalMap = {
-    // wrong interpreted radicals
-    化: '亻',
-    个: '𠆢',
-    并: 'radical-15',
-    刈: '刂',
-    乞: '𠂉',
-    込: '⻌',
-    尚: 'radical-50',
-    忙: '忄',
-    扎: '扌',
-    汁: '氵',
-    犯: '犭',
-    艾: '艹',
-    邦: 'radical-76',
-    阡: '阝',
-    老: '耂',
-    杰: '灬',
-    礼: '礻',
-    疔: '疒',
-    禹: '禸',
-    初: '衤',
-    買: '罒',
-    滴: 'radical-239',
-
-    // Other form used more often
-    竹: '⺮',
-};
+import RadicalList from './radicals/RadicalList.vue';
 
 export interface RadicalItem {
     radical: string;
@@ -119,7 +79,10 @@ export interface Radical {
 }
 
 export default Vue.extend<RadicalsComponentData, any, any, any>({
-    data: () => ({
+    components: {
+        RadicalList,
+    },
+    /*     data: () => ({
         radicals: [],
         radicalMap: {},
         radicalPredictionMap: {},
@@ -150,6 +113,8 @@ export default Vue.extend<RadicalsComponentData, any, any, any>({
             if (existingRadicalStr == null) {
                 existingRadicalStr = allRadicals.join();
             }
+
+            this.radicalPredictionMap[existingRadicalStr] = [];
 
             if (this.nextRadicals.length === 0) {
                 this.nextRadicals = kanjiRadical.otherRadicals;
@@ -236,7 +201,7 @@ export default Vue.extend<RadicalsComponentData, any, any, any>({
                     return arr1.filter(r => arr2.includes(r));
                 }, []);
         },
-    },
+    }, */
 });
 
 interface RadicalsComponentData {
