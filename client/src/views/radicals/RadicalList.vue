@@ -42,7 +42,7 @@
             :title="item.tags.join(', ')"
             :class="classesForRadical(item.radical)"
             @click="emitSelectRadical(item.radical)"
-            >{{ item.radical }}</span
+            >{{ resolveRadical(item.radical) }}</span
         >
     </div>
 </template>
@@ -95,12 +95,27 @@ export default Vue.extend({
         isSelectedRadical(radical: string): boolean {
             return this.selectedRadicals.indexOf(radical) !== -1;
         },
+        resolveRadicalClass(radical: string): string {
+            const source = radicalMap[radical];
+            if (source != null && source.length > 2) {
+                return source;
+            }
+
+            return '';
+        },
         classesForRadical(radical: string): string {
-            const classes = [];
+            const classes = [this.resolveRadicalClass(radical)];
 
             if (this.isSelectedRadical(radical)) classes.push('selected');
 
             return classes.join(' ');
+        },
+        resolveRadical(radical: string): string {
+            const foundRadical = radicalMap[radical];
+            if (foundRadical == null) return radical;
+            if (foundRadical.length < 3) return foundRadical;
+
+            return '';
         },
         emitSelectRadical(radical: string): void {
             this.$emit('select-radical', {

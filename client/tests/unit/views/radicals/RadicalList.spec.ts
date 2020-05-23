@@ -76,4 +76,56 @@ describe('RadicalList', () => {
         ]));
     });
 
+    it('add selected class', async () => {
+        mockFetch([
+            { radical: '言', tags: [] },
+        ]);
+
+        const wrapper = shallowMount(RadicalList);
+        wrapper.setProps({
+            selectedRadicals: ['言'],
+        });
+        await flushPromises();
+
+        expect(wrapper.find('span').classes()).toContain('selected');
+    })
+
+    describe('Resolving Radical Map', () => {
+
+        it('resolve radical class', async () => {
+            mockFetch([
+                { radical: '并', tags: [] },
+            ]);
+
+            const wrapper = shallowMount(RadicalList);
+            await flushPromises();
+
+            expect(wrapper.find('span').classes()).toEqual(expect.arrayContaining(['radical-15']));
+            expect(wrapper.text()).toBe('');
+        });
+
+        it('resolve radical map', async () => {
+            mockFetch([
+                { radical: '个', tags: [] },
+            ]);
+
+            const wrapper = shallowMount(RadicalList);
+            await flushPromises();
+
+            expect(wrapper.text()).toEqual('𠆢');
+        });
+
+        it('resolve normal radical', async () => {
+            mockFetch([
+                { radical: '言', tags: [] },
+            ]);
+
+            const wrapper = shallowMount(RadicalList);
+            await flushPromises();
+
+            expect(wrapper.text()).toEqual('言');
+        });
+
+    })
+
 });
