@@ -35,18 +35,15 @@
 </style>
 
 <template>
-    <div class="radicals">
+    <div class="radicals flex-items">
         <span
             v-for="item in radicals"
             :key="item.radical"
             :title="item.tags.join(', ')"
             :class="classesForRadical(item.radical)"
-            @click="selectRadical(item.radical)"
+            @click="emitSelectRadical(item.radical)"
             >{{ item.radical }}</span
         >
-        <!-- <span v-for="item in radicals" :key="item.radical" :title="item.tags.join(', ')">{{
-            item.radical
-        }}</span> -->
     </div>
 </template>
 
@@ -83,9 +80,11 @@ const radicalMap = {
 };
 
 export default Vue.extend({
+    props: {
+        selectedRadicals: { type: Array, default: () => [] },
+    },
     data: () => ({
         radicals: [],
-        selectedRadicals: [],
     }),
     async created() {
         const response = await fetch('/radicals.json');
@@ -93,14 +92,6 @@ export default Vue.extend({
         this.radicals = radicals.sort((r1, r2) => r1.stroke - r2.stroke);
     },
     methods: {
-        selectRadical(radical: string): void {
-            const selected = this.selectedRadicals as string[];
-            if (this.isSelectedRadical(radical)) {
-                this.selectedRadicals = selected.filter(r => r !== radical);
-            } else {
-                this.selectedRadicals = [...selected, radical];
-            }
-        },
         isSelectedRadical(radical: string): boolean {
             return this.selectedRadicals.indexOf(radical) !== -1;
         },
@@ -111,6 +102,12 @@ export default Vue.extend({
 
             return classes.join(' ');
         },
+        emitSelectRadical(radical: string): void {
+            this.$emit('select-radical', {
+                radical,
+                selected: !this.isSelectedRadical(radical),
+            });
+        },
     },
 });
 
@@ -118,5 +115,10 @@ interface Radical {
     radical: string;
     stroke: number;
     tags: string[];
+}
+
+export interface SelectRadicalEvent {
+    radical: string;
+    selected: boolean;
 }
 </script>

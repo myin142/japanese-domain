@@ -1,17 +1,4 @@
 <style scoped>
-.flex-items {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-}
-
-.flex-items > span {
-    margin: 0.25em;
-    padding: 0.25em;
-    width: 1.5em;
-    height: 1.5em;
-}
-
 .radicals .selected {
     border: 1px solid grey;
     background-color: lightgrey;

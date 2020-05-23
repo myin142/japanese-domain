@@ -51,7 +51,7 @@ describe('RadicalList', () => {
         expect(wrapper.find('span').attributes()).toHaveProperty('title', 'say, word');
     });
 
-    it('add selected class on click', async () => {
+    it('emit selected radical', async () => {
         fetchMock.default.mockResponse(async req => JSON.stringify([
             { radical: '言', tags: [] },
         ]));
@@ -62,7 +62,26 @@ describe('RadicalList', () => {
         const radical = wrapper.find('span');
         await radical.trigger('click');
 
-        expect(radical.attributes()).toHaveProperty('class', 'selected');
+        expect(wrapper.emitted('select-radical')).toEqual(expect.arrayContaining([
+            [{ radical: '言', selected: true }],
+        ]));
+    });
+
+    it('emit selected false if already selected radical', async () => {
+        fetchMock.default.mockResponse(async req => JSON.stringify([
+            { radical: '言', tags: [] },
+        ]));
+
+        const wrapper = shallowMount(RadicalList);
+        await flushPromises();
+
+        wrapper.setProps({ selectedRadicals: ['言'] })
+        const radical = wrapper.find('span');
+        await radical.trigger('click');
+
+        expect(wrapper.emitted('select-radical')).toEqual(expect.arrayContaining([
+            [{ radical: '言', selected: false }],
+        ]));
     });
 
 });
