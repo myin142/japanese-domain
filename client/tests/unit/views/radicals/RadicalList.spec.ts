@@ -1,23 +1,15 @@
 import { shallowMount } from '@vue/test-utils';
 import RadicalList from '@/views/radicals/RadicalList.vue';
 import flushPromises from 'flush-promises';
-import * as fetchMock from 'jest-fetch-mock';
+import { mockFetch } from '../../../helper/fetch-mock';
 
 describe('RadicalList', () => {
 
-    beforeEach(() => {
-        fetchMock.enableFetchMocks();
-    });
-
-    afterEach(() => {
-        fetchMock.disableFetchMocks();
-    })
-
     it('list radicals', async () => {
-        fetchMock.default.mockResponse(async req => JSON.stringify([
+        mockFetch([
             { radical: '手', tags: [] },
             { radical: '言', tags: [] },
-        ]));
+        ]);
 
         const wrapper = shallowMount(RadicalList);
         await flushPromises();
@@ -28,10 +20,10 @@ describe('RadicalList', () => {
     });
 
     it('list radicals sorted by strokes', async () => {
-        fetchMock.default.mockResponse(async req => JSON.stringify([
+        mockFetch([
             { radical: '言', stroke: 7, tags: [] },
             { radical: '手', stroke: 4, tags: [] },
-        ]));
+        ]);
 
         const wrapper = shallowMount(RadicalList);
         await flushPromises();
@@ -41,9 +33,9 @@ describe('RadicalList', () => {
     });
 
     it('add radical tags as title', async () => {
-        fetchMock.default.mockResponse(async req => JSON.stringify([
+        mockFetch([
             { radical: '言', tags: ['say', 'word'] },
-        ]));
+        ]);
 
         const wrapper = shallowMount(RadicalList);
         await flushPromises();
@@ -52,9 +44,9 @@ describe('RadicalList', () => {
     });
 
     it('emit selected radical', async () => {
-        fetchMock.default.mockResponse(async req => JSON.stringify([
+        mockFetch([
             { radical: '言', tags: [] },
-        ]));
+        ]);
 
         const wrapper = shallowMount(RadicalList);
         await flushPromises();
@@ -68,9 +60,9 @@ describe('RadicalList', () => {
     });
 
     it('emit selected false if already selected radical', async () => {
-        fetchMock.default.mockResponse(async req => JSON.stringify([
+        mockFetch([
             { radical: '言', tags: [] },
-        ]));
+        ]);
 
         const wrapper = shallowMount(RadicalList);
         await flushPromises();
