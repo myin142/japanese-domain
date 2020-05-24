@@ -64,31 +64,6 @@ Resources:
       CognitoIdentityProviders:
         - ClientId: !Ref JapaneseGlobalUserPoolClient
           ProviderName: !GetAtt JapaneseGlobalUserPool.ProviderName
-  JapaneseGlobalAuthenticatedUserRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Principal:
-              Federated: "cognito-identity.amazonaws.com"
-            Action:
-              - "sts:AssumeRoleWithWebIdentity"
-            Condition:
-              StringEquals:
-                "cognito-identity.amazonaws.com:aud": !Ref JapaneseGlobalIdentityPool
-              "ForAnyValue:StringLike":
-                "cognito-identity.amazonaws.com:amr": authenticated
-      Policies:
-        - PolicyName: "JapaneseGlobalAuthenticatedUserPolicy"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: "Allow"
-                Action:
-                  - "dynamodb:Query"
-                Resource: !GetAtt RadicalSearchTable.Arn
   JapaneseGlobalUnauthenticatedUserRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -110,16 +85,15 @@ Resources:
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
-              - Effect: "Deny"
+              - Effect: "Allow"
                 Action:
-                  - "lambda:InvokeFunction"
-                Resource: "*"
+                  - "dynamodb:Query"
+                Resource: !GetAtt RadicalSearchTable.Arn
   JapaneseGlobalIdentityPoolRoleMapping:
     Type: "AWS::Cognito::IdentityPoolRoleAttachment"
     Properties:
       IdentityPoolId: !Ref JapaneseGlobalIdentityPool
       Roles:
-        authenticated: !GetAtt JapaneseGlobalAuthenticatedUserRole.Arn
         unauthenticated: !GetAtt JapaneseGlobalUnauthenticatedUserRole.Arn
 
 Outputs:
