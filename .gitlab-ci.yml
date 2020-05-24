@@ -1,0 +1,15 @@
+image: node
+
+pages:
+  before_script:
+    - cd client
+    - npm install
+  script:
+    - npm test
+    - npm run build
+    - mv ./dist ../public
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
