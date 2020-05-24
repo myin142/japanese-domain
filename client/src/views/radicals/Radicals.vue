@@ -1,85 +1,61 @@
-<style scoped>
-.radicals .selected {
-    border: 1px solid grey;
-    background-color: lightgrey;
-}
-
-.radicals .highlight {
-    opacity: 1;
-}
-.radicals.searching :not(.highlight) {
-    opacity: 0.5;
-}
-
-.radicals > span {
-    background-position: 50% 50%;
-    background-repeat: no-repeat;
-    background-size: 24px;
-    cursor: pointer;
-    color: black;
-    border-radius: 50%;
-}
-</style>
-
 <template>
     <div>
-        <RadicalList />
-        <!--         <input v-model="debounceTagSearch" />
-        <div class="radicals flex-items" :class="{ searching: isSearching }">
-            <span
-                v-for="item in radicals"
-                :key="item.radical"
-                :class="classesForRadical(item.radical)"
-                @click="selectRadical(item.radical)"
-                :title="item.tags.join(', ')"
-                >{{ resolveRadical(item.radical) }}</span
-            >
-        </div>
+        <radical-list :selectedRadicals="selectedRadicals" @select-radical="selectRadical" />
+
         <hr />
-        <div class="kanjis flex-items">
-            <span v-for="kanji in selectedRadicalKanjis" :key="kanji">{{ kanji }}</span>
-        </div> -->
+
+        <div class="flex-items">
+            <span v-for="kanji in selectedKanjis" :key="kanji">{{ kanji }}</span>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import * as _ from 'lodash';
-import { http } from '../services/http.service';
-import { kanjiRadicalService, KanjiRadical } from '../services/kanji-radical.service';
-import RadicalList from './radicals/RadicalList.vue';
+import RadicalList, { SelectRadicalEvent } from './RadicalList.vue';
+import { kanjiRadicalService } from '../../services/kanji-radical.service';
 
-export interface RadicalItem {
-    radical: string;
-    stroke: number;
-    tags: string[];
-}
-
-export interface RadicalList {
-    radical: string;
-    radicals: RadicalItem[];
-}
-
-export interface Radical {
-    radical: string;
-    kanjis: string[];
-}
-
-export default Vue.extend<RadicalsComponentData, any, any, any>({
+export default Vue.extend({
     components: {
         RadicalList,
     },
-    /*     data: () => ({
-        radicals: [],
-        radicalMap: {},
-        radicalPredictionMap: {},
+    data: () => ({
         selectedRadicals: [],
-        tagSearch: '',
+        radicalMapCache: {},
     }),
-    async created() {
-        const radicals: RadicalItem[] = await http.get('/radicals.json');
-        this.radicals = radicals.sort((r1, r2) => r1.stroke - r2.stroke);
+    methods: {
+        async selectRadical({ radical, selected }: SelectRadicalEvent) {
+            if (this.radicalMapCache[radical] == null) {
+                const kanjis = await kanjiRadicalService.getKanjisForRadical(radical);
+                this.radicalMapCache[radical] = kanjis.kanjis.map(x => x.kanji);
+            }
+
+            if (selected) {
+                this.selectedRadicals = [...this.selectedRadicals, radical];
+            } else {
+                this.selectedRadicals = this.selectedRadicals.filter(r => r !== radical);
+            }
+        },
     },
+    computed: {
+        selectedKanjis(): string[] {
+            return this.selectedRadicals
+                .map(r => this.radicalMapCache[r])
+                .filter(x => x != null)
+                .reduce((arr1, arr2) => {
+                    if (arr2.length === 0) {
+                        return arr1;
+                    }
+
+                    if (arr1.length === 0) {
+                        return arr2;
+                    }
+
+                    return arr1.filter(r => arr2.includes(r));
+                }, []);
+        },
+    },
+    /*
     methods: {
         async searchRadical(radical: string): Promise<KanjiRadical> {
             return await kanjiRadicalService.getKanjisForRadical(radical);
@@ -190,12 +166,4 @@ export default Vue.extend<RadicalsComponentData, any, any, any>({
         },
     }, */
 });
-
-interface RadicalsComponentData {
-    radicals: RadicalItem[];
-    radicalMap: { [r: string]: string[] };
-    radicalPredictionMap: { [r: string]: string[] };
-    selectedRadicals: string[];
-    tagSearch: string;
-}
 </script>

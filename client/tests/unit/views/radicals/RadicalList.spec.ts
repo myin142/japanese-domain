@@ -64,10 +64,11 @@ describe('RadicalList', () => {
             { radical: '言', tags: [] },
         ]);
 
-        const wrapper = shallowMount(RadicalList);
+        const wrapper = shallowMount(RadicalList, {
+            propsData: { selectedRadicals: ['言'] }
+        });
         await flushPromises();
 
-        wrapper.setProps({ selectedRadicals: ['言'] })
         const radical = wrapper.find('span');
         await radical.trigger('click');
 
@@ -81,9 +82,8 @@ describe('RadicalList', () => {
             { radical: '言', tags: [] },
         ]);
 
-        const wrapper = shallowMount(RadicalList);
-        wrapper.setProps({
-            selectedRadicals: ['言'],
+        const wrapper = shallowMount(RadicalList, {
+            propsData: { selectedRadicals: ['言'] },
         });
         await flushPromises();
 

@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import Error from '../views/Error.vue';
 import Login from '../views/Login.vue';
-import Radicals from '../views/Radicals.vue';
+import Radicals from '../views/radicals/Radicals.vue';
 import Grammar from '../views/Grammar.vue';
 import { auth } from '@/services/auth.service';
 
