@@ -5,6 +5,10 @@ import { mockFetch } from '../../../helper/fetch-mock';
 
 describe('RadicalList', () => {
 
+    beforeEach(() => {
+        mockFetch([]);
+    });
+
     it('list radicals', async () => {
         mockFetch([
             { radical: '手', tags: [] },
@@ -127,5 +131,35 @@ describe('RadicalList', () => {
         });
 
     })
+
+    describe('Tag Search', () => {
+
+        it('highlight radicals containing tag search', async () => {
+            mockFetch([
+                { radical: '手', tags: ['hand'] },
+                { radical: '言', tags: ['say'] },
+            ])
+
+            const wrapper = shallowMount(RadicalList);
+            await flushPromises();
+
+            const input = wrapper.find('input');
+            input.setValue('say');
+
+            await flushPromises();
+
+            const result = wrapper.find('.highlight');
+            expect(result.text()).toEqual('言');
+        });
+
+        it('is searching if search not empty', async () => {
+            const wrapper = shallowMount(RadicalList);
+            await flushPromises();
+            await wrapper.find('input').setValue('search');
+
+            expect(wrapper.find('.searching').exists()).toBeTruthy();
+        })
+
+    });
 
 });

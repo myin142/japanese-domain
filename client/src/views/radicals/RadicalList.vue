@@ -29,21 +29,23 @@
     background-repeat: no-repeat;
     background-size: 24px;
     cursor: pointer;
-    color: black;
     border-radius: 50%;
 }
 </style>
 
 <template>
-    <div class="radicals flex-items">
-        <span
-            v-for="item in radicals"
-            :key="item.radical"
-            :title="item.tags.join(', ')"
-            :class="classesForRadical(item.radical)"
-            @click="emitSelectRadical(item.radical)"
-            >{{ resolveRadical(item.radical) }}</span
-        >
+    <div>
+        <input v-model="tagSearch" />
+        <div class="radicals flex-items" :class="{ searching: isSearching }">
+            <span
+                v-for="item in radicals"
+                :key="item.radical"
+                :title="item.tags.join(', ')"
+                :class="classesForRadical(item.radical)"
+                @click="emitSelectRadical(item.radical)"
+                >{{ resolveRadical(item.radical) }}</span
+            >
+        </div>
     </div>
 </template>
 
@@ -85,6 +87,7 @@ export default Vue.extend({
     },
     data: () => ({
         radicals: [],
+        tagSearch: '',
     }),
     async created() {
         const response = await fetch('/radicals.json');
@@ -107,6 +110,7 @@ export default Vue.extend({
             const classes = [this.resolveRadicalClass(radical)];
 
             if (this.isSelectedRadical(radical)) classes.push('selected');
+            if (this.tagSearchResult.includes(radical)) classes.push('highlight');
 
             return classes.join(' ');
         },
@@ -122,6 +126,16 @@ export default Vue.extend({
                 radical,
                 selected: !this.isSelectedRadical(radical),
             });
+        },
+    },
+    computed: {
+        isSearching(): boolean {
+            return this.tagSearch.trim() !== '';
+        },
+        tagSearchResult(): string[] {
+            return this.radicals
+                .filter(r => r.tags.some(t => t.includes(this.tagSearch)))
+                .map(r => r.radical);
         },
     },
 });
