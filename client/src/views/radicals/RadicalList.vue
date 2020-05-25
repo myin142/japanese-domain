@@ -17,11 +17,15 @@
     background-color: lightgrey;
 }
 
-.radicals .highlight {
+.radicals .hightlight {
+    color: red;
+}
+
+.radicals .next-radical {
     opacity: 1;
 }
-.radicals.searching :not(.highlight) {
-    opacity: 0.5;
+.radicals.filtering :not(.next-radical):not(.selected) {
+    opacity: 0.3;
 }
 
 .radicals > span {
@@ -36,7 +40,7 @@
 <template>
     <div>
         <input v-model="tagSearch" />
-        <div class="radicals flex-items" :class="{ searching: isSearching }">
+        <div class="radicals flex-items" :class="{ filtering: isFiltering }">
             <span
                 v-for="item in radicals"
                 :key="item.radical"
@@ -84,6 +88,7 @@ const radicalMap = {
 export default Vue.extend({
     props: {
         selectedRadicals: { type: Array, default: () => [] },
+        nextRadicals: { type: Array, default: () => [] },
     },
     data: () => ({
         radicals: [],
@@ -111,6 +116,7 @@ export default Vue.extend({
 
             if (this.isSelectedRadical(radical)) classes.push('selected');
             if (this.tagSearchResult.includes(radical)) classes.push('highlight');
+            if (this.nextRadicals.includes(radical)) classes.push('next-radical');
 
             return classes.join(' ');
         },
@@ -122,6 +128,15 @@ export default Vue.extend({
             return '';
         },
         emitSelectRadical(radical: string): void {
+            if (
+                !this.isSelectedRadical(radical) &&
+                this.nextRadicals != null &&
+                this.nextRadicals.length > 0 &&
+                !this.nextRadicals.includes(radical)
+            ) {
+                return;
+            }
+
             this.$emit('select-radical', {
                 radical,
                 selected: !this.isSelectedRadical(radical),
@@ -129,8 +144,11 @@ export default Vue.extend({
         },
     },
     computed: {
-        isSearching(): boolean {
-            return this.tagSearch.trim() !== '';
+        isFiltering(): boolean {
+            return (
+                this.tagSearch.trim() !== '' ||
+                (this.nextRadicals != null && this.nextRadicals.length > 0)
+            );
         },
         tagSearchResult(): string[] {
             return this.radicals

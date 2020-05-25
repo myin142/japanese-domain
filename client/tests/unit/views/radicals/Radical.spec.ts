@@ -119,6 +119,60 @@ describe('Radical', () => {
             expect(text).not.toContain('刃');
         });
 
+        describe('Radical Prediction', () => {
+
+            it('for single radical', async () => {
+                kanjiRadicalService.getKanjisForRadical = jest.fn()
+                    .mockImplementationOnce(() => Promise.resolve({
+                        radical: '匕',
+                        kanjis: [
+                            { otherRadicals: ['ノ', '乙'] },
+                            { otherRadicals: ['二', '止'] },
+                        ],
+                    }));
+
+                const wrapper = shallowMount(Radicals);
+                const list = wrapper.find(RadicalList);
+
+                list.vm.$emit('select-radical', { radical: '匕', selected: true });
+
+                await flushPromises();
+
+                expect(list.props()).toEqual(expect.objectContaining({
+                    nextRadicals: ['ノ', '乙', '二', '止'],
+                }));
+            });
+
+            it('for multiple radicals', async () => {
+                kanjiRadicalService.getKanjisForRadical = jest.fn()
+                    .mockImplementationOnce(() => Promise.resolve({
+                        radical: '匕',
+                        kanjis: [
+                            { otherRadicals: ['ノ', '乙'] },
+                            { otherRadicals: ['ノ', '十'] },
+                        ],
+                    }))
+                    .mockImplementationOnce(() => Promise.resolve({
+                        radical: '乙',
+                        kanjis: [
+                            { otherRadicals: ['ノ', '匕', '爿'] },
+                        ],
+                    }));
+
+                const wrapper = shallowMount(Radicals);
+                const list = wrapper.find(RadicalList);
+
+                list.vm.$emit('select-radical', { radical: '匕', selected: true });
+                list.vm.$emit('select-radical', { radical: '乙', selected: true });
+                await flushPromises();
+
+                expect(list.props()).toEqual(expect.objectContaining({
+                    nextRadicals: ['ノ', '爿'],
+                }));
+            });
+
+        });
+
     });
 
 });

@@ -94,6 +94,23 @@ describe('RadicalList', () => {
         expect(wrapper.find('span').classes()).toContain('selected');
     })
 
+    it('is filtering if search not empty', async () => {
+        const wrapper = shallowMount(RadicalList);
+        await flushPromises();
+        await wrapper.find('input').setValue('search');
+
+        expect(wrapper.find('.filtering').exists()).toBeTruthy();
+    })
+
+    it('is filtering if next radicals not empty', async () => {
+        const wrapper = shallowMount(RadicalList, {
+            propsData: { nextRadicals: [''] },
+        });
+        await flushPromises();
+
+        expect(wrapper.find('.filtering').exists()).toBeTruthy();
+    })
+
     describe('Resolving Radical Map', () => {
 
         it('resolve radical class', async () => {
@@ -152,13 +169,52 @@ describe('RadicalList', () => {
             expect(result.text()).toEqual('言');
         });
 
-        it('is searching if search not empty', async () => {
-            const wrapper = shallowMount(RadicalList);
-            await flushPromises();
-            await wrapper.find('input').setValue('search');
+    });
 
-            expect(wrapper.find('.searching').exists()).toBeTruthy();
-        })
+    describe('Next Radicals', () => {
+
+        it('add next radical class', async () => {
+            mockFetch([
+                { radical: '手', tags: [] },
+                { radical: '言', tags: [] },
+            ]);
+
+            const wrapper = shallowMount(RadicalList, {
+                propsData: { nextRadicals: ['言'] },
+            });
+            await flushPromises();
+
+            const next = wrapper.find('.next-radical');
+            expect(next.text()).toEqual('言');
+        });
+
+        it('prevent select emit if not next radical', async () => {
+            mockFetch([{ radical: '手', tags: [] }]);
+
+            const wrapper = shallowMount(RadicalList, {
+                propsData: { nextRadicals: ['言'] },
+            });
+            await flushPromises();
+
+            await wrapper.find('span').trigger('click');
+
+            expect(wrapper.emitted()).toEqual({});
+        });
+
+        it('allow select emit if selected radical', async () => {
+            mockFetch([{ radical: '手', tags: [] }]);
+
+            const wrapper = shallowMount(RadicalList, {
+                propsData: { nextRadicals: ['言'], selectedRadicals: ['手'] },
+            });
+            await flushPromises();
+
+            await wrapper.find('span').trigger('click');
+
+            expect(wrapper.emitted('select-radical')).toEqual(expect.arrayContaining([
+                [{ radical: '手', selected: false }],
+            ]));
+        });
 
     });
 

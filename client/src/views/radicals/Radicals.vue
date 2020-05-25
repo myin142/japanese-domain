@@ -1,6 +1,10 @@
 <template>
     <div>
-        <radical-list :selectedRadicals="selectedRadicals" @select-radical="selectRadical" />
+        <radical-list
+            :selectedRadicals="selectedRadicals"
+            :nextRadicals="nextRadicals"
+            @select-radical="selectRadical"
+        />
 
         <hr />
 
@@ -12,6 +16,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import * as _ from 'lodash';
 import RadicalList, { SelectRadicalEvent } from './RadicalList.vue';
 import { kanjiRadicalService } from '../../services/kanji-radical.service';
 
@@ -22,12 +27,14 @@ export default Vue.extend({
     data: () => ({
         selectedRadicals: [],
         radicalMapCache: {},
+        radicalPredictionMap: {},
     }),
     methods: {
         async selectRadical({ radical, selected }: SelectRadicalEvent) {
             if (this.radicalMapCache[radical] == null) {
                 const kanjis = await kanjiRadicalService.getKanjisForRadical(radical);
                 this.radicalMapCache[radical] = kanjis.kanjis.map(x => x.kanji);
+                this.radicalPredictionMap[radical] = kanjis.kanjis.map(x => x.otherRadicals);
             }
 
             if (selected) {
@@ -35,6 +42,9 @@ export default Vue.extend({
             } else {
                 this.selectedRadicals = this.selectedRadicals.filter(r => r !== radical);
             }
+        },
+        selectedRadicalsWithout(radical: string): string[] {
+            return this.selectedRadicals.filter(r => r !== radical);
         },
     },
     computed: {
@@ -53,6 +63,20 @@ export default Vue.extend({
 
                     return arr1.filter(r => arr2.includes(r));
                 }, []);
+        },
+        nextRadicals(): string[] {
+            const uniqueNextRadicals = _.uniq(
+                _.flattenDeep(
+                    this.selectedRadicals.map(r => {
+                        const otherSelected = this.selectedRadicalsWithout(r);
+                        return _.filter(this.radicalPredictionMap[r], otherRads =>
+                            otherSelected.every(x => otherRads.includes(x))
+                        );
+                    })
+                )
+            );
+
+            return uniqueNextRadicals.filter(r => !this.selectedRadicals.includes(r)) as string[];
         },
     },
     /*
