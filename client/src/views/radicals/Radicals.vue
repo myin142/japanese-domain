@@ -4,6 +4,7 @@
             :selectedRadicals="selectedRadicals"
             :nextRadicals="nextRadicals"
             @select-radical="selectRadical"
+            @reset="resetRadicals()"
         />
 
         <hr />
@@ -45,6 +46,9 @@ export default Vue.extend({
         },
         selectedRadicalsWithout(radical: string): string[] {
             return this.selectedRadicals.filter(r => r !== radical);
+        },
+        resetRadicals(): void {
+            this.selectedRadicals = [];
         },
     },
     computed: {

@@ -39,7 +39,12 @@
 
 <template>
     <div>
-        <input v-model="tagSearch" />
+        <div class="d-flex justify-content-center align-items-center">
+            <input v-model="tagSearch" />
+            <button type="button" class="btn btn-light ml-2" @click="resetValues()">
+                <i class="fas fa-redo">Reset</i>
+            </button>
+        </div>
         <div class="radicals flex-items" :class="{ filtering: isFiltering }">
             <span
                 v-for="item in radicals"
@@ -142,13 +147,14 @@ export default Vue.extend({
                 selected: !this.isSelectedRadical(radical),
             });
         },
+        resetValues(): void {
+            this.tagSearch = '';
+            this.$emit('reset');
+        },
     },
     computed: {
         isFiltering(): boolean {
-            return (
-                this.tagSearch.trim() !== '' ||
-                (this.nextRadicals != null && this.nextRadicals.length > 0)
-            );
+            return this.tagSearch.trim() !== '' || this.selectedRadicals.length > 0;
         },
         tagSearchResult(): string[] {
             return this.radicals

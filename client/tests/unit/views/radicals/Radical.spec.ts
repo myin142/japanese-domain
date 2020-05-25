@@ -175,4 +175,18 @@ describe('Radical', () => {
 
     });
 
+    describe('Reset Radicals', () => {
+
+        it('reset selected radials on reset event', async () => {
+            const wrapper = shallowMount(Radicals, {
+                data: () => ({ selectedRadicals: [''] }),
+            });
+            const list = wrapper.find(RadicalList);
+            await list.vm.$emit('reset');
+
+            expect(list.props()).toEqual(expect.objectContaining({ selectedRadicals: [] }))
+        });
+
+    });
+
 });

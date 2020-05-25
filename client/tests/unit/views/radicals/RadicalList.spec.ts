@@ -102,14 +102,38 @@ describe('RadicalList', () => {
         expect(wrapper.find('.filtering').exists()).toBeTruthy();
     })
 
-    it('is filtering if next radicals not empty', async () => {
+    it('is filtering if selected radicals not empty', async () => {
         const wrapper = shallowMount(RadicalList, {
-            propsData: { nextRadicals: [''] },
+            propsData: { selectedRadicals: [''] },
         });
         await flushPromises();
 
         expect(wrapper.find('.filtering').exists()).toBeTruthy();
     })
+
+    describe('reset Button', () => {
+
+        it('reset tag search', async () => {
+            const wrapper = shallowMount(RadicalList, {
+                data: () => ({ tagSearch: 'Search' }),
+            });
+
+            await flushPromises();
+            await wrapper.find('button').trigger('click');
+
+            const input = wrapper.find('input').element as HTMLInputElement;
+            expect(input.value).toEqual('');
+        });
+
+        it('emit reset event', async () => {
+            const wrapper = shallowMount(RadicalList);
+            await flushPromises();
+            await wrapper.find('button').trigger('click');
+
+            expect(wrapper.emitted('reset')).toBeTruthy();
+        });
+
+    });
 
     describe('Resolving Radical Map', () => {
 
@@ -122,7 +146,7 @@ describe('RadicalList', () => {
             await flushPromises();
 
             expect(wrapper.find('span').classes()).toEqual(expect.arrayContaining(['radical-15']));
-            expect(wrapper.text()).toBe('');
+            expect(wrapper.text()).not.toContain('并');
         });
 
         it('resolve radical map', async () => {
@@ -133,7 +157,7 @@ describe('RadicalList', () => {
             const wrapper = shallowMount(RadicalList);
             await flushPromises();
 
-            expect(wrapper.text()).toEqual('𠆢');
+            expect(wrapper.text()).toContain('𠆢');
         });
 
         it('resolve normal radical', async () => {
@@ -144,7 +168,7 @@ describe('RadicalList', () => {
             const wrapper = shallowMount(RadicalList);
             await flushPromises();
 
-            expect(wrapper.text()).toEqual('言');
+            expect(wrapper.text()).toContain('言');
         });
 
     })
