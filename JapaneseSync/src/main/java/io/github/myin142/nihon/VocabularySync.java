@@ -13,20 +13,23 @@ import software.amazon.awssdk.services.dynamodb.model.Update;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class VocabularySync implements SyncCommand {
     private static String vocabUrl = "http://ftp.monash.edu/pub/nihongo/JMdict_e.gz";
-    private static long limit = 1000;
-    private static long listLimit = 25;
+    private static long limit = -1;
 
     private GzipHttpClient gzipHttpClient;
+    private Path output = Paths.get("vocabulary.csv");
 
     public VocabularySync(GzipHttpClient gzipHttpClient) {
         this.gzipHttpClient = gzipHttpClient;
@@ -34,10 +37,6 @@ public class VocabularySync implements SyncCommand {
 
     @Override
     public void sync(List<String> args) {
-        DynamoDbClient dbClient = DynamoDbClient.builder()
-                .region(Region.EU_CENTRAL_1)
-                .build();
-
         try (InputStream in = gzipHttpClient.download(vocabUrl);
              XMLReaderClient xmlReader = new XMLReaderClient(in)) {
 
@@ -47,7 +46,7 @@ public class VocabularySync implements SyncCommand {
 
             log.info("Start Processing");
             List<Vocabulary> batchVocab = new ArrayList<>();
-            while (count < limit && reader.hasNext()) {
+            while ((limit == -1 || count < limit) && reader.hasNext()) {
                 Vocabulary vocab = new Vocabulary();
                 XMLUtils.eachElementBetween(xmlReader.getReader(), "entry", elem -> {
                     String tag = elem.getName().getLocalPart();
@@ -78,15 +77,16 @@ public class VocabularySync implements SyncCommand {
                     count++;
                     batchVocab.add(vocab);
                 }
-
-                if (batchVocab.size() >= listLimit) {
-                    transactUpdate(batchVocab, dbClient);
-                    batchVocab.clear();
-                }
             }
 
-            if (batchVocab.size() > 0) {
-                transactUpdate(batchVocab, dbClient);
+            if (Files.notExists(output)) {
+                Files.createFile(output);
+            }
+
+            try (BufferedWriter writer = Files.newBufferedWriter(output, StandardOpenOption.TRUNCATE_EXISTING)) {
+                for (Vocabulary vocabulary : batchVocab) {
+                    writer.write(vocabulary.toCsv() + "\n");
+                }
             }
 
             log.info("Finish Processing of " + count + " items");
@@ -94,29 +94,6 @@ public class VocabularySync implements SyncCommand {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-    }
-
-    private void transactUpdate(List<Vocabulary> vocabularies, DynamoDbClient dbClient) {
-        List<TransactWriteItem> transactions = vocabularies.stream()
-                .map(v -> {
-                    return Update.builder()
-                            .tableName("japanese-vocabulary")
-                            .key(Map.of(
-                                    "vocabulary", AttributeValue.builder().s(v.getWord()).build(),
-                                    "reading", AttributeValue.builder().s(v.getReading()).build()
-                            ))
-                            .updateExpression("set meanings = :meanings")
-                            .expressionAttributeValues(Map.of(
-                                    ":meanings", AttributeValue.builder().ss(v.getMeanings()).build()
-                            ))
-                            .build();
-                })
-                .map(u -> TransactWriteItem.builder().update(u).build())
-                .collect(Collectors.toList());
-
-        dbClient.transactWriteItems(TransactWriteItemsRequest.builder()
-                .transactItems(transactions)
-                .build());
     }
 
 }
