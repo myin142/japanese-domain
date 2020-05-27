@@ -13,37 +13,35 @@ table tr {
 
 
 <template>
-  <div>
-    <table>
-      <tr>
-        <th></th>
-        <th>Ru-Verb</th>
-        <th>U-Verb</th>
-      </tr>
-      <tr v-for="item in conjugations" :key="item.name">
-        <td>
-          <a :href="item.link" target="blank">{{item.name}}</a>
-        </td>
-        <td>{{item.columns[0]}}</td>
-        <td>{{item.columns[1]}}</td>
-      </tr>
-    </table>
+    <div>
+        <table>
+            <tr>
+                <th></th>
+                <th>Ru-Verb</th>
+                <th>U-Verb</th>
+            </tr>
+            <tr v-for="item in conjugations" :key="item.name">
+                <td>
+                    <a :href="item.link" target="blank">{{ item.name }}</a>
+                </td>
+                <td>{{ item.columns[0] }}</td>
+                <td>{{ item.columns[1] }}</td>
+            </tr>
+        </table>
 
-    <hr />
+        <hr />
 
-    <table>
-      <tr v-for="item in others" :key="item.text">
-        <td :title="item.explain">
-          <a :href="item.link" target="blank">{{item.text}}</a>
-        </td>
-        <td
-          v-for="example in item.examples"
-          :key="example.text"
-          :title="example.explain"
-        >{{example.text}}</td>
-      </tr>
-    </table>
-  </div>
+        <table>
+            <tr v-for="item in others" :key="item.text">
+                <td :title="item.explain">
+                    <a :href="item.link" target="blank">{{ item.text }}</a>
+                </td>
+                <td v-for="example in item.examples" :key="example.text" :title="example.explain">
+                    {{ example.text }}
+                </td>
+            </tr>
+        </table>
+    </div>
 </template>
 
 <script lang="ts">
@@ -204,6 +202,26 @@ export default Vue.extend({
                         explain: 'must not do',
                     },
                 ],
+            },
+            {
+                text: 'だらけ',
+                explain: 'riddled everywhere, negative connotation',
+                link:
+                    'http://www.guidetojapanese.org/learn/grammar/covered#Using_when_an_object_is_riddled_everywhere_with_something',
+                examples: [{ text: '間違いだらけ', explain: 'Riddled with mistakes' }],
+            },
+            {
+                text: 'まみれ',
+                explain: 'covered in, only physical objects',
+                link:
+                    'http://www.guidetojapanese.org/learn/grammar/covered#Using_to_describe_a_covering',
+                examples: [{ text: '血まみれ', explain: 'Covered in blood' }],
+            },
+            {
+                text: 'ずくめ',
+                explain: 'applied to whole thing',
+                link: 'http://www.guidetojapanese.org/learn/grammar/covered#_to_express_entirety',
+                examples: [{ text: '白ずくめ', explain: 'all in white' }],
             },
         ],
     }),
