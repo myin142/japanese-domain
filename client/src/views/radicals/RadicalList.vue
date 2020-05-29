@@ -39,11 +39,15 @@
 
 <template>
     <div>
-        <div class="d-flex justify-content-center align-items-center">
-            <input v-model="tagSearch" />
-            <button type="button" class="btn btn-light ml-2" @click="resetValues()">
-                <i class="fas fa-redo">Reset</i>
-            </button>
+        <div class="row justify-content-center mb-3">
+            <div class="col-9 col-md-4 col-lg-3">
+                <input class="w-100" v-model="tagSearch" />
+            </div>
+            <div class="col-3 col-md-1">
+                <button type="button" class="btn btn-light" @click="resetValues()">
+                    <i class="fas fa-redo">Reset</i>
+                </button>
+            </div>
         </div>
         <div class="radicals flex-items" :class="{ filtering: isFiltering }">
             <span

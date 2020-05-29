@@ -1,32 +1,28 @@
 <template>
     <div id="app">
-        <div id="nav">
-            <router-link to="/radicals">Radicals</router-link> |
-            <router-link to="/grammar">Grammar</router-link>
+        <div class="container mb-3">
+            <ul class="nav justify-content-center">
+                <li class="nav-item">
+                    <router-link class="nav-link" to="/radicals">Radicals</router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link class="nav-link" to="/grammar">Grammar</router-link>
+                </li>
+            </ul>
         </div>
-        <router-view />
+        <div class="container">
+            <router-view />
+        </div>
     </div>
 </template>
 
 <style>
-#app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-}
-
-#nav {
-    padding: 30px;
-}
-
-#nav a {
+.nav a {
     font-weight: bold;
     color: #2c3e50;
 }
 
-#nav a.router-link-exact-active {
+.nav a.router-link-exact-active {
     color: #42b983;
 }
 </style>
