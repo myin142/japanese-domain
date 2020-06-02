@@ -193,6 +193,30 @@ describe('RadicalList', () => {
             expect(result.text()).toEqual('言');
         });
 
+        it('not highlight if empty search and empty tags', async () => {
+            mockFetch([
+                { radical: '手', tags: [''] },
+            ])
+
+            const wrapper = shallowMount(RadicalList);
+            await flushPromises();
+
+            const result = wrapper.find('.highlight');
+            expect(result.exists()).toBeFalsy();
+        });
+
+        it('not highlight if empty search and not empty tags', async () => {
+            mockFetch([
+                { radical: '手', tags: ['hand'] },
+            ])
+
+            const wrapper = shallowMount(RadicalList);
+            await flushPromises();
+
+            const result = wrapper.find('.highlight');
+            expect(result.exists()).toBeFalsy();
+        });
+
     });
 
     describe('Next Radicals', () => {

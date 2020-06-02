@@ -17,14 +17,14 @@
     background-color: lightgrey;
 }
 
-.radicals .hightlight {
+.radicals.filtering .highlight {
     color: red;
 }
 
 .radicals .next-radical {
     opacity: 1;
 }
-.radicals.filtering :not(.next-radical):not(.selected) {
+.radicals.filtering :not(.next-radical):not(.selected):not(.highlight) {
     opacity: 0.3;
 }
 
@@ -127,7 +127,7 @@ export default Vue.extend({
             if (this.tagSearchResult.includes(radical)) classes.push('highlight');
             if (this.nextRadicals.includes(radical)) classes.push('next-radical');
 
-            return classes.join(' ');
+            return classes.filter(x => x.trim() != '').join(' ');
         },
         resolveRadical(radical: string): string {
             const foundRadical = radicalMap[radical];
@@ -161,8 +161,10 @@ export default Vue.extend({
             return this.tagSearch.trim() !== '' || this.selectedRadicals.length > 0;
         },
         tagSearchResult(): string[] {
+            if (this.tagSearch == '') return [];
+
             return this.radicals
-                .filter(r => r.tags.some(t => t.includes(this.tagSearch)))
+                .filter(r => r.tags.some(t => t.trim() != '' && t.includes(this.tagSearch)))
                 .map(r => r.radical);
         },
     },
