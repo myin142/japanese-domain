@@ -4,7 +4,7 @@ import flushPromises from 'flush-promises';
 import { mockFetch } from '../../../helper/fetch-mock';
 
 const awaitFn = async (fn: Function) => { fn(); return flushPromises(); }
-const search = async (wrapper: Wrapper<RadicalList>, text: string) => awaitFn(() => wrapper.find('input').setValue(text));
+const search = async (wrapper: Wrapper<any>, text: string) => awaitFn(() => wrapper.find('input').setValue(text));
 
 describe('RadicalList', () => {
 
