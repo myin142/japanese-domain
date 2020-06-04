@@ -41,7 +41,7 @@
     <div>
         <div class="row justify-content-center mb-3">
             <div class="col-9 col-md-4 col-lg-3">
-                <input class="w-100" v-model="tagSearch" />
+                <input class="w-100" v-model="tagSearch" ref="input" />
             </div>
             <div class="col-3 col-md-1">
                 <button type="button" class="btn btn-light" @click="resetValues()">
@@ -55,7 +55,10 @@
                 :key="item.radical"
                 :title="item.tags.join(', ')"
                 :class="classesForRadical(item.radical)"
+                :tabindex="getTabIndex(item.radical)"
                 @click="emitSelectRadical(item.radical)"
+                @keydown.space.prevent="emitSelectRadical(item.radical)"
+                @keyup.esc="focusSearchInput()"
                 >{{ resolveRadical(item.radical) }}</span
             >
         </div>
@@ -155,6 +158,24 @@ export default Vue.extend({
             this.tagSearch = '';
             this.$emit('reset');
         },
+        getTabIndex(radical: string): number {
+            if (this.selectedRadicals.includes(radical)) {
+                return 0;
+            }
+
+            if (this.isSearching) {
+                return this.tagSearchResult.includes(radical) ? 0 : -1;
+            }
+
+            if (this.nextRadicals.length == 0 || this.nextRadicals.includes(radical)) {
+                return 0;
+            }
+
+            return -1;
+        },
+        focusSearchInput(): void {
+            this.$refs.input.focus();
+        },
         radicalIncludesTag(radical: Radical, tag: string): boolean {
             return radical.tags.some(t => t.trim() != '' && t.includes(tag));
         },
@@ -164,10 +185,13 @@ export default Vue.extend({
     },
     computed: {
         isFiltering(): boolean {
-            return this.tagSearch.trim() !== '' || this.selectedRadicals.length > 0;
+            return this.isSearching || this.selectedRadicals.length > 0;
+        },
+        isSearching(): boolean {
+            return this.tagSearch.trim() !== '';
         },
         tagSearchResult(): string[] {
-            if (this.tagSearch == '') return [];
+            if (!this.isSearching) return [];
 
             return this.radicals
                 .filter(

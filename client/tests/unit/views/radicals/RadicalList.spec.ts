@@ -1,7 +1,10 @@
-import { shallowMount } from '@vue/test-utils';
+import { shallowMount, Wrapper } from '@vue/test-utils';
 import RadicalList from '@/views/radicals/RadicalList.vue';
 import flushPromises from 'flush-promises';
 import { mockFetch } from '../../../helper/fetch-mock';
+
+const awaitFn = async (fn: Function) => { fn(); return flushPromises(); }
+const search = async (wrapper: Wrapper<RadicalList>, text: string) => awaitFn(() => wrapper.find('input').setValue(text));
 
 describe('RadicalList', () => {
 
@@ -111,7 +114,7 @@ describe('RadicalList', () => {
         expect(wrapper.find('.filtering').exists()).toBeTruthy();
     })
 
-    describe('reset Button', () => {
+    describe('Reset Button', () => {
 
         it('reset tag search', async () => {
             const wrapper = shallowMount(RadicalList, {
@@ -282,6 +285,127 @@ describe('RadicalList', () => {
             expect(wrapper.emitted('select-radical')).toEqual(expect.arrayContaining([
                 [{ radical: '手', selected: false }],
             ]));
+        });
+
+    });
+
+    describe('Select Via Keyboard', () => {
+
+        it('radical is focusable', async () => {
+            mockFetch([
+                { radical: '言', tags: [] },
+            ]);
+
+            const wrapper = shallowMount(RadicalList)
+            await flushPromises();
+
+            const radical = wrapper.find('span');
+            const index = parseInt(radical.attributes().tabindex);
+            expect(index).toBeGreaterThan(-1);
+        });
+
+        it('radical not focusable if not next radical', async () => {
+            mockFetch([
+                { radical: '言', tags: [] },
+            ]);
+
+            const wrapper = shallowMount(RadicalList, {
+                propsData: { nextRadicals: ['手'] },
+            });
+            await flushPromises();
+
+            const radical = wrapper.find('span');
+            const index = parseInt(radical.attributes().tabindex);
+            expect(index).toEqual(-1)
+        });
+
+        it('radical is focusable if next radical', async () => {
+            mockFetch([
+                { radical: '言', tags: [] },
+            ]);
+
+            const wrapper = shallowMount(RadicalList, {
+                propsData: { nextRadicals: ['言'] },
+            });
+            await flushPromises();
+
+            const radical = wrapper.find('span');
+            const index = parseInt(radical.attributes().tabindex);
+            expect(index).toBeGreaterThan(-1)
+        });
+
+        it('radical not focusable if searching and not search result', async () => {
+            mockFetch([
+                { radical: '言', tags: [] },
+            ]);
+
+            const wrapper = shallowMount(RadicalList);
+            await flushPromises();
+            await search(wrapper, 'text')
+
+            const radical = wrapper.find('span');
+            const index = parseInt(radical.attributes().tabindex);
+            expect(index).toEqual(-1)
+        });
+
+        it('radical is focusable if searching and is search result', async () => {
+            mockFetch([
+                { radical: '言', tags: ['hand'] },
+            ]);
+
+            const wrapper = shallowMount(RadicalList);
+            await flushPromises();
+            await search(wrapper, 'hand')
+
+            const radical = wrapper.find('span');
+            const index = parseInt(radical.attributes().tabindex);
+            expect(index).toBeGreaterThan(-1)
+        });
+
+        it('selected radical is focusable', async () => {
+            mockFetch([
+                { radical: '言', tags: [] },
+            ]);
+
+            const wrapper = shallowMount(RadicalList, {
+                propsData: {
+                    nextRadicals: ['手'],
+                    selectedRadicals: ['言'],
+                },
+            });
+            await flushPromises();
+
+            const radical = wrapper.find('span');
+            const index = parseInt(radical.attributes().tabindex);
+            expect(index).toBeGreaterThan(-1)
+        });
+
+        it('emit selected radical on space key', async () => {
+            mockFetch([
+                { radical: '言', tags: [] },
+            ]);
+
+            const wrapper = shallowMount(RadicalList);
+            await flushPromises();
+
+            await wrapper.find('span').trigger('keydown', { keyCode: 32 });
+
+            expect(wrapper.emitted('select-radical')).toEqual(expect.arrayContaining([
+                [{ radical: '言', selected: true }],
+            ]));
+        });
+
+        it('focus on search input on escape key', async () => {
+            mockFetch([
+                { radical: '言', tags: [] },
+            ]);
+
+            const wrapper = shallowMount(RadicalList, { attachToDocument: true });
+            await flushPromises();
+
+            await wrapper.find('span').trigger('keyup', { keyCode: 27 });
+
+            expect(wrapper.vm.$refs.input).toEqual(document.activeElement);
         });
 
     });
