@@ -11,6 +11,13 @@ Globals:
     Timeout: 20
 
 Resources:
+  JapaneseAnalyzer:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: JapaneseAnalyzer
+      Handler: io.github.myin142.nihon.AnalyzerMain::handleRequest
+      Runtime: java11
+      MemorySize: 512
   RadicalSearchTable:
     Type: AWS::DynamoDB::Table
     Properties:
