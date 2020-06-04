@@ -155,6 +155,12 @@ export default Vue.extend({
             this.tagSearch = '';
             this.$emit('reset');
         },
+        radicalIncludesTag(radical: Radical, tag: string): boolean {
+            return radical.tags.some(t => t.trim() != '' && t.includes(tag));
+        },
+        isNextRadicalIfNotEmpty(radical: Radical): boolean {
+            return this.nextRadicals.length == 0 || this.nextRadicals.includes(radical.radical);
+        },
     },
     computed: {
         isFiltering(): boolean {
@@ -164,7 +170,11 @@ export default Vue.extend({
             if (this.tagSearch == '') return [];
 
             return this.radicals
-                .filter(r => r.tags.some(t => t.trim() != '' && t.includes(this.tagSearch)))
+                .filter(
+                    r =>
+                        this.radicalIncludesTag(r, this.tagSearch) &&
+                        this.isNextRadicalIfNotEmpty(r)
+                )
                 .map(r => r.radical);
         },
     },

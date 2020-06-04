@@ -217,6 +217,26 @@ describe('RadicalList', () => {
             expect(result.exists()).toBeFalsy();
         });
 
+        it('not highlight if search is not next radical', async () => {
+            mockFetch([
+                { radical: '手', tags: ['hand'] },
+                { radical: '言', tags: ['say'] },
+            ]);
+
+            const wrapper = shallowMount(RadicalList, {
+                propsData: { nextRadicals: ['言'] },
+            });
+            await flushPromises();
+
+            const input = wrapper.find('input');
+            input.setValue('hand');
+
+            await flushPromises();
+
+            const next = wrapper.find('.highlight');
+            expect(next.exists()).toBeFalsy();
+        });
+
     });
 
     describe('Next Radicals', () => {
