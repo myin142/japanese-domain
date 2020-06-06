@@ -18,6 +18,8 @@ Resources:
       Handler: io.github.myin142.nihon.AnalyzerMain::handleRequest
       Runtime: java11
       MemorySize: 512
+
+  # Table
   RadicalSearchTable:
     Type: AWS::DynamoDB::Table
     Properties:

@@ -9,9 +9,7 @@
 
         <hr />
 
-        <div class="flex-items">
-            <span v-for="kanji in selectedKanjis" :key="kanji">{{ kanji }}</span>
-        </div>
+        <kanji-list :kanjis="selectedKanjis"></kanji-list>
     </div>
 </template>
 
@@ -19,11 +17,13 @@
 import Vue from 'vue';
 import * as _ from 'lodash';
 import RadicalList, { SelectRadicalEvent } from './RadicalList.vue';
+import KanjiList from './KanjiList.vue';
 import { kanjiRadicalService } from '../../services/kanji-radical.service';
 
 export default Vue.extend({
     components: {
         RadicalList,
+        KanjiList,
     },
     data: () => ({
         selectedRadicals: [],

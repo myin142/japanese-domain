@@ -1,6 +1,7 @@
 import { shallowMount } from '@vue/test-utils';
 import Radicals from '@/views/radicals/Radicals.vue';
 import RadicalList from '@/views/radicals/RadicalList.vue';
+import KanjiList from '@/views/radicals/KanjiList.vue';
 import { kanjiRadicalService } from '@/services/kanji-radical.service';
 import flushPromises from 'flush-promises';
 
@@ -57,7 +58,8 @@ describe('Radical', () => {
 
             await flushPromises();
 
-            expect(wrapper.text()).toContain('我承');
+            const kanjiList = wrapper.find(KanjiList);
+            expect(kanjiList.props()).toEqual({ kanjis: ['我', '承'] });
         });
 
         it('show kanjis in multiple selected radicals', async () => {
@@ -85,10 +87,11 @@ describe('Radical', () => {
 
             await flushPromises();
 
-            const text = wrapper.text();
-            expect(text).toContain('挈');
-            expect(text).not.toContain('刃');
-            expect(text).not.toContain('我');
+            const kanjiList = wrapper.find(KanjiList);
+            const kanjiProp = kanjiList.props().kanjis;
+            expect(kanjiProp).toContain('挈');
+            expect(kanjiProp).not.toContain('刃');
+            expect(kanjiProp).not.toContain('我');
         });
 
         it('show kanjis after unselecting radical', async () => {
@@ -114,9 +117,10 @@ describe('Radical', () => {
 
             await flushPromises();
 
-            const text = wrapper.text();
-            expect(text).toContain('我');
-            expect(text).not.toContain('刃');
+            const kanjiList = wrapper.find(KanjiList);
+            const kanjiProp = kanjiList.props().kanjis;
+            expect(kanjiProp).toContain('我');
+            expect(kanjiProp).not.toContain('刃');
         });
 
         describe('Radical Prediction', () => {
