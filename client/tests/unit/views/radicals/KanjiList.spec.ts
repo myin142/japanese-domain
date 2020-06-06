@@ -49,9 +49,12 @@ describe('KanjiList', () => {
 
         const wrapper = shallowMount(KanjiList);
         await tokenizeBtn(wrapper).trigger('click');
-        await flushPromises();
+        await wrapper.vm.$nextTick();
 
-        expect(wrapper.text()).toContain('日本語を勉強');
+        const text = wrapper.text();
+        expect(text).toContain('日本語');
+        expect(text).toContain('を');
+        expect(text).toContain('勉強');
         expect(allTokens(wrapper).length).toEqual(3);
     });
 
