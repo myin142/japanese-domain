@@ -15,6 +15,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: JapaneseAnalyzer
+      FunctionName: JapaneseAnalyzer
       Handler: io.github.myin142.nihon.AnalyzerMain::handleRequest
       Runtime: java11
       MemorySize: 512
@@ -97,7 +98,10 @@ Resources:
               - Effect: "Allow"
                 Action:
                   - "dynamodb:Query"
-                Resource: !GetAtt RadicalSearchTable.Arn
+                  - "lambda:InvokeFunction"
+                Resource:
+                  - !GetAtt RadicalSearchTable.Arn
+                  - !GetAtt JapaneseAnalyzer.Arn
   JapaneseGlobalIdentityPoolRoleMapping:
     Type: "AWS::Cognito::IdentityPoolRoleAttachment"
     Properties:
