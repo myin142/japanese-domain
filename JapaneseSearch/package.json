@@ -1,0 +1,14 @@
+{
+  "name": "japanese-search",
+  "version": "1.0.0",
+  "description": "Search japanese keyword in jisho api",
+  "main": "app.js",
+  "repository": "https://github.com/awslabs/aws-sam-cli/tree/develop/samcli/local/init/templates/cookiecutter-aws-sam-hello-nodejs",
+  "author": "SAM CLI",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0"
+  },
+  "scripts": {},
+  "devDependencies": {}
+}

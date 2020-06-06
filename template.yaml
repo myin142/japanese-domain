@@ -11,6 +11,13 @@ Globals:
     Timeout: 20
 
 Resources:
+  JapaneseSearch:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: JapaneseSearch
+      FunctionName: JapaneseSearch
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
   JapaneseAnalyzer:
     Type: AWS::Serverless::Function
     Properties:
@@ -102,6 +109,7 @@ Resources:
                 Resource:
                   - !GetAtt RadicalSearchTable.Arn
                   - !GetAtt JapaneseAnalyzer.Arn
+                  - !GetAtt JapaneseSearch.Arn
   JapaneseGlobalIdentityPoolRoleMapping:
     Type: "AWS::Cognito::IdentityPoolRoleAttachment"
     Properties:
