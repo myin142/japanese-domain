@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.atilika.kuromoji.unidic.Tokenizer;
+import com.atilika.kuromoji.ipadic.Tokenizer;
 
 /**
  * Handler for requests to Lambda function.
