@@ -47,6 +47,15 @@ public class KanjiSync implements SyncCommand {
                         case "literal":
                             kanji.setKanji(XMLUtils.nextText(reader));
                             break;
+                        case "grade":
+                            kanji.setGrade(XMLUtils.nextInt(reader));
+                            break;
+                        case "freq":
+                            kanji.setFrequency(XMLUtils.nextInt(reader));
+                            break;
+                        case "jlpt":
+                            kanji.setJlpt(XMLUtils.nextInt(reader));
+                            break;
                     }
                 });
 
