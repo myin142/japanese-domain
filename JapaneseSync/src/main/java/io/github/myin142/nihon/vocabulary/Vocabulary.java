@@ -1,4 +1,4 @@
-package io.github.myin142.nihon;
+package io.github.myin142.nihon.vocabulary;
 
 import lombok.Data;
 

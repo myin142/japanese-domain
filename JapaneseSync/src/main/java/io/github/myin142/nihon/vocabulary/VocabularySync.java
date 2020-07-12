@@ -1,15 +1,11 @@
-package io.github.myin142.nihon;
+package io.github.myin142.nihon.vocabulary;
 
+import io.github.myin142.nihon.JapaneseUtils;
+import io.github.myin142.nihon.SyncCommand;
 import io.github.myin142.nihon.client.GzipHttpClient;
 import io.github.myin142.nihon.xml.XMLReaderClient;
 import io.github.myin142.nihon.xml.XMLUtils;
 import lombok.extern.slf4j.Slf4j;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.TransactWriteItem;
-import software.amazon.awssdk.services.dynamodb.model.TransactWriteItemsRequest;
-import software.amazon.awssdk.services.dynamodb.model.Update;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;

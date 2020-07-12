@@ -1,7 +1,9 @@
 package io.github.myin142.nihon;
 
 import io.github.myin142.nihon.client.GzipHttpClient;
+import io.github.myin142.nihon.kanji.KanjiSync;
 import io.github.myin142.nihon.radical.RadicalSync;
+import io.github.myin142.nihon.vocabulary.VocabularySync;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,9 +13,10 @@ import java.util.function.Function;
 
 public class JapaneseSync {
 
-    private static Map<String, Function<GzipHttpClient, SyncCommand>> syncCommands = Map.of(
+    private static final Map<String, Function<GzipHttpClient, SyncCommand>> syncCommands = Map.of(
             "vocabulary", VocabularySync::new,
-            "radical", RadicalSync::new
+            "radical", RadicalSync::new,
+            "kanji", KanjiSync::new
     );
 
     public static void main(String[] args) {
