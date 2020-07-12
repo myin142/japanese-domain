@@ -23,10 +23,10 @@ import java.util.List;
 @AllArgsConstructor
 public class KanjiSync implements SyncCommand {
     private static final String url = "http://ftp.monash.edu.au/pub/nihongo/kanjidic2.xml.gz";
-    private static long limit = 10;
+    private static long limit = -1;
 
     private final GzipHttpClient gzipHttpClient;
-    private final Path output = Paths.get("kanji.csv");
+    private final Path output = Paths.get("kanji.json");
 
     @Override
     public void sync(List<String> args) {
